@@ -31,23 +31,29 @@ FetchContent_MakeAvailable(Catch2)
 
 # Library target for reusable logic
 add_library(mesh_verify_lib STATIC
-    MeshVerifier.cpp 
-    MeshLoader.cpp
-    Predicates.cpp
-    MeshTopology.cpp
+    src/MeshVerifier.cpp 
+    src/MeshLoader.cpp
+    src/Predicates.cpp
+    src/MeshTopology.cpp
 )
-target_include_directories(mesh_verify_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Set include directories
+target_include_directories(mesh_verify_lib PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
 target_link_libraries(mesh_verify_lib PRIVATE assimp::assimp)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(mesh_verify_lib PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
 # CLI Executable
-add_executable(mesh_verifier main.cpp)
+add_executable(mesh_verifier cli/main.cpp)
 target_link_libraries(mesh_verifier PRIVATE mesh_verify_lib)
 
 # Python Module
-nanobind_add_module(mesh_verify_py python_bindings.cpp)
+nanobind_add_module(mesh_verify_py python/python_bindings.cpp)
 target_link_libraries(mesh_verify_py PRIVATE mesh_verify_lib)
 
 # Tests
@@ -59,6 +65,3 @@ add_executable(unit_tests
 target_link_libraries(unit_tests PRIVATE mesh_verify_lib Catch2::Catch2WithMain)
 enable_testing()
 add_test(NAME AllTests COMMAND unit_tests)
-
-# Include directories
-target_include_directories(mesh_verifier PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

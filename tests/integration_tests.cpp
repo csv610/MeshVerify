@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
-#include "MeshLoader.hpp"
-#include "MeshVerifier.hpp"
+#include "mesh_verify/MeshLoader.hpp"
+#include "mesh_verify/MeshVerifier.hpp"
 #include <fstream>
 
 TEST_CASE("Integration - Load and Verify OBJ", "[integration]") {

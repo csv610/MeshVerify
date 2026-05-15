@@ -3,14 +3,15 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/pair.h>
-#include "MeshVerifier.hpp"
+#include "mesh_verify/MeshVerifier.hpp"
 
 namespace nb = nanobind;
 using namespace nb::literals;
 
 NB_MODULE(mesh_verify_py, m) {
-    m.doc() = "MeshVerify Python bindings using nanobind";
+    m.doc() = "MeshVerify Python bindings - Robust Geometric Verification";
 
+    // --- Core Primitives ---
     nb::class_<Point>(m, "Point")
         .def(nb::init<double, double>())
         .def_rw("x", &Point::x)
@@ -30,27 +31,49 @@ NB_MODULE(mesh_verify_py, m) {
         .def(nb::init<std::array<size_t, 4>>())
         .def_rw("v", &Tetrahedron::v);
 
+    // --- Results ---
     nb::class_<VerificationResult>(m, "VerificationResult")
         .def_ro("success", &VerificationResult::success)
         .def_ro("message", &VerificationResult::message)
         .def_ro("failing_elements", &VerificationResult::failingElements)
-        .def("__bool__", [](const VerificationResult &res) { return res.success; });
+        .def("__bool__", [](const VerificationResult &res) { return res.success; })
+        .def("__repr__", [](const VerificationResult &res) {
+            return res.success ? "<VerificationResult: SUCCESS>" : "<VerificationResult: FAILED - " + res.message + ">";
+        });
+
+    // --- Clean Mesh Classes with Vertices ---
 
     nb::class_<Mesh2D>(m, "Mesh2D")
         .def(nb::init<>())
+        .def("__init__", [](Mesh2D &mesh, const std::vector<std::pair<double, double>> &v, const std::vector<std::array<size_t, 3>> &f) {
+            new (&mesh) Mesh2D();
+            for (auto const& p : v) mesh.vertices.push_back({p.first, p.second});
+            for (auto const& tri : f) mesh.triangles.push_back({tri});
+        }, "vertices"_a, "triangles"_a)
         .def_rw("vertices", &Mesh2D::vertices)
         .def_rw("triangles", &Mesh2D::triangles);
 
     nb::class_<SurfaceMesh>(m, "SurfaceMesh")
         .def(nb::init<>())
+        .def("__init__", [](SurfaceMesh &mesh, const std::vector<std::array<double, 3>> &v, const std::vector<std::array<size_t, 3>> &f) {
+            new (&mesh) SurfaceMesh();
+            for (auto const& p : v) mesh.vertices.push_back({p[0], p[1], p[2]});
+            for (auto const& tri : f) mesh.triangles.push_back({tri});
+        }, "vertices"_a, "triangles"_a)
         .def_rw("vertices", &SurfaceMesh::vertices)
         .def_rw("triangles", &SurfaceMesh::triangles);
 
     nb::class_<TetMesh>(m, "TetMesh")
         .def(nb::init<>())
+        .def("__init__", [](TetMesh &mesh, const std::vector<std::array<double, 3>> &v, const std::vector<std::array<size_t, 4>> &f) {
+            new (&mesh) TetMesh();
+            for (auto const& p : v) mesh.vertices.push_back({p[0], p[1], p[2]});
+            for (auto const& tet : f) mesh.tets.push_back({tet});
+        }, "vertices"_a, "tets"_a)
         .def_rw("vertices", &TetMesh::vertices)
         .def_rw("tets", &TetMesh::tets);
 
+    // --- Static Verifier Methods ---
     nb::class_<MeshVerifier>(m, "MeshVerifier")
         .def_static("is_delaunay", &MeshVerifier::isDelaunay, "mesh"_a)
         .def_static("is_delaunay_surface", &MeshVerifier::isDelaunaySurface, "mesh"_a)

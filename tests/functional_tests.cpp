@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "MeshVerifier.hpp"
+#include "mesh_verify/MeshVerifier.hpp"
 
 TEST_CASE("MeshVerifier - isDelaunay", "[functional][verifier]") {
     Mesh2D mesh;

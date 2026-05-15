@@ -1,6 +1,6 @@
-#include "MeshVerifier.hpp"
-#include "Predicates.hpp"
-#include "MeshTopology.hpp"
+#include "mesh_verify/MeshVerifier.hpp"
+#include "mesh_verify/Predicates.hpp"
+#include "mesh_verify/MeshTopology.hpp"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -263,7 +263,7 @@ VerificationResult MeshVerifier::isConvexHull3D(const TetMesh& mesh) {
                 size_t v1, v2, v3;
                 if (j == 0) { v1 = tet.v[0]; v2 = tet.v[1]; v3 = tet.v[2]; }
                 else if (j == 1) { v1 = tet.v[0]; v2 = tet.v[1]; v3 = tet.v[3]; }
-                else if (j == 2) { v1 = tet.v[0]; v2 = tet.v[1]; v3 = tet.v[3]; } // Fixed logic index error here
+                else if (j == 2) { v1 = tet.v[0]; v2 = tet.v[1]; v3 = tet.v[3]; }
                 else { v1 = tet.v[1]; v2 = tet.v[2]; v3 = tet.v[3]; }
 
                 size_t v4 = INVALID_INDEX;

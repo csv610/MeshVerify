@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
-#include "Predicates.hpp"
-#include "MeshTopology.hpp"
+#include "mesh_verify/Predicates.hpp"
+#include "mesh_verify/MeshTopology.hpp"
 
 TEST_CASE("Predicates - orient2d", "[unit][predicates]") {
     Predicates::init();
