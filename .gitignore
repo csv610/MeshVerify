@@ -1,0 +1,26 @@
+# Build artifacts
+build/
+bin/
+lib/
+*.o
+*.a
+*.so
+*.dylib
+*.pyd
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+
+# Local Test Files
+temp_test.obj
+temp_voronoi.obj
+temp_sites.txt
+mesh_verifier
+unit_tests
